@@ -1,4 +1,6 @@
-#include <ARduino.h>
+#include <Arduino.h>
+#include <DHT.h>
+#include "SdsDustSensor.h"
 #ifndef TEMPSENSOR_H
 #define TEMPSENSOR_H
 

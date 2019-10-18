@@ -1,5 +1,4 @@
-#include <DHT.h>
-#include "SdsDustSensor.h"
+
 
 // Defines are preprocessor. That allows to give names to constant values before the programm is compiled. 
 // !!Constants do not use the small memory space on the chip 
@@ -7,9 +6,12 @@
 #define DHT_TYPE DHT11   // DHT 11
 const int DUST_TX_PIN = D1;
 const int DUST_RX_PIN = D2;
-
+/*
 DHT dht(DHT_PIN, DHT_TYPE);
 SdsDustSensor sds(DUST_RX_PIN, DUST_TX_PIN);
+*/
+
+MeasuringStation measure(DHT_PIN, DHT_TYPE, DUST_TX_PIN, DUST_RX_PIN);
 
 void setup() {
   sds.begin();
