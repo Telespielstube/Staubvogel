@@ -3,6 +3,8 @@
         {
             "name": "Mac",
             "includePath": [
+                "/Users/marta/Documents/Arduino/libraries/SdsDustSensor/src/",
+                "/Users/marta/Documents/Arduino/libraries/DHT_sensor_library/",
                 "/Users/marta/Library/Arduino15/packages/esp8266/tools/**",
                 "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.5.2/**"
             ],

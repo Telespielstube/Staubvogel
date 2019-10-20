@@ -1,20 +1,25 @@
 #include <Arduino.h>
-#include <DHT.h>
+#include "DHT.h"
 #include "SdsDustSensor.h"
-#ifndef TEMPSENSOR_H
-#define TEMPSENSOR_H
 
-class TempSensor {
+#ifndef MEASURINGSTATION_H
+#define MEASURINGSTATION_H
+
+class Station {
     private:
-        const int SENSORPIN;
-        const int SENSORTYPE;
+        int _dhtPin;
+        int _dhtType;
+        int _DUST_RX_PIN;
+        int _DUST_TX_PIN;
+        DHT _dht;
+        SdsDustSensor _sds;
 
     public:
-        TempSensor(const int SENSORPIN, const int SENSORTYPE);
-        void init()
-        float readTemperature();
+        Station(int dhtPin, int dhtType, int DUST_RX_PIN, int DUST_TX_PIN);
         float readHumidity();
-
+        float readTemperature();
+        void sensorFailure(float humidity, float temperature);
+        PmResult readPm();
 };
 
 #endif
