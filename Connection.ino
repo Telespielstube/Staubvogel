@@ -10,8 +10,13 @@ Connection::Connection( char *SSID,  char *PASSWORD, char *MQTTSERVER, int MQTTP
     _MQTTPORT = MQTTPORT;
     _MQTTUSER = MQTTUSER;
     _MQTTPASSWORD = MQTTPASSWORD;
-    
-     Serial.println("Trying to connect to network.");
+
+}
+
+// Function to connect to wifi access point.
+void Connection::connectToWifi() {
+        Serial.print("Trying to connect to network:");
+    Serial.println(_SSID);
     WiFi.begin(_SSID, _PASSWORD);
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print('.');
@@ -19,21 +24,12 @@ Connection::Connection( char *SSID,  char *PASSWORD, char *MQTTSERVER, int MQTTP
     } 
     Serial.print("Connected to: ");
     Serial.println(WiFi.SSID());
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
     // connectToWifi(_SSID, _PASSWORD);
     connectToBroker(_client, _MQTTSERVER, _MQTTPORT, _MQTTUSER);
-}
-
-/* Function to connect to wifi access point.
-void Connection::connectToWifi( char *ssid,  char *password) {
     Serial.println("Trying to connect to network.");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        Serial.print('.');
-        delay(300);
-    } 
-    Serial.print("Connected to: ");
-    Serial.println(WiFi.SSID());
-} */
+} 
 
 // Function to connect and to a MQTT server.
 void Connection::connectToBroker(PubSubClient client, char *mqttServer,  int mqttPort,  char *mqttUser) {
@@ -45,6 +41,8 @@ void Connection::connectToBroker(PubSubClient client, char *mqttServer,  int mqt
         Serial.println("Connecting to MQTT broker.");
         if (client.connect(mqttUser)) {
             Serial.println("connected");
+        } else {
+            Serial.println("Could not connect");
         }
     }
 }

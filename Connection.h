@@ -20,13 +20,9 @@ class Connection {
         PubSubClient _client;
 
     public:
-        Connection( char *SSID,  char *PASSWORD, 
-                   char *MQTTSERVER, 
-                    int MQTTPORT, 
-                    char *MQTTUSER, 
-                    char *MQTTPASSWORD);
-        void connectToWifi();
-        void obtainLocalIpAddress();
+        Connection(char *SSID,  char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD);
+         void connectToWifi();
+       // void obtainLocalIpAddress();
         void connectToBroker(PubSubClient client, char *mqttServer,  int mqttPort,  char *mqttUser);
 };
 #endif
