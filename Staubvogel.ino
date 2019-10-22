@@ -1,13 +1,23 @@
-#include "MeasuringStation.h"
 #include "DHT.h"
 #include "SdsDustSensor.h"
+#include "MeasuringStation.h"
+#include "Connection.h"
 
 #define DHT_PIN 2   
 #define DHT_TYPE DHT11   // DHT 11
-const int DUST_RX_PIN = D1;  // fine dust sensor
-const int DUST_TX_PIN = D2;  // fine dust sensor
+int DUST_RX_PIN = D1;  // fine dust sensor
+int DUST_TX_PIN = D2;  // fine dust sensor
+
+char *SSID = "Telespielstube_2.0"; 
+char *PASSWORD = "8757420130565695";
+
+char *MQTTSERVER = "localhost";
+int MQTTPORT = 1883;
+char *MQTTUSER = "Marta";
+char *MQTTPASSWORD = "12345";
 
 Station station(DHT_PIN, DHT_TYPE, DUST_RX_PIN, DUST_TX_PIN);
+Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWORD);
 
 void setup() {
   Serial.begin(9600);
