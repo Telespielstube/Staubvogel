@@ -25,7 +25,7 @@ class Connection {
                     int MQTTPORT, 
                     char *MQTTUSER, 
                     char *MQTTPASSWORD);
-        void connectToWifi( char *ssid,  char *password);
+        void connectToWifi();
         void obtainLocalIpAddress();
         void connectToBroker(PubSubClient client, char *mqttServer,  int mqttPort,  char *mqttUser);
 };
