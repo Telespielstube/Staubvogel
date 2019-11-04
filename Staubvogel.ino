@@ -8,8 +8,8 @@ const int DHT_TYPE = DHT11;   // DHT 11
 const int DUST_RX_PIN = D1;  // fine dust sensor
 const int DUST_TX_PIN = D2;  // fine dust sensor
 
-char *SSID = "Telespielstube_2.0"; 
-char *PASSWORD = "8757420130565695";
+const char *SSID = "Telespielstube_2.0"; 
+const char *PASSWORD = "8757420130565695";
 
 char *MQTTSERVER = "localhost";
 int MQTTPORT = 1883;
@@ -21,13 +21,16 @@ Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWO
 //Publish publish(); 
 //Subscribe subscribe();
 
-void setup() {
+void setup() 
+{
+  delay(2000);
   Serial.begin(9600);
   connection.connectToWifi();
 }
 
-void loop() {
-    delay(2000);
+void loop() 
+{
+    delay(8000);
     
     float humidity = station.readHumidity();
     float temperature = station.readTemperature();
@@ -39,12 +42,14 @@ void loop() {
     Serial.print(temperature, 1);
     Serial.println(F("C ")); 
   
-    if (pm.isOk()) {
+    if (pm.isOk()) 
+    {
         Serial.print("PM2.5 = ");
               Serial.print(pm.pm25);
       Serial.print(", PM10 = ");
       Serial.println(pm.pm10);
-    } else {
+    } else 
+    {
       Serial.println("PM not measuring.");
     }
 }
