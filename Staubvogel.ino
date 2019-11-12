@@ -22,8 +22,8 @@ WiFiClient wifiClient;
 PubSubClient pubClient;
 Station station(DHT_PIN, DHT_TYPE, DUST_RX_PIN, DUST_TX_PIN);
 Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWORD, wifiClient, pubClient);
-float humidity;
-float temperature;
+float humidity = 0.0;
+float temperature = 0.0;
 
 void setup()
 {
@@ -43,7 +43,24 @@ void loop()
   PmResult pm = station.readPm();
   message = buildMessage(pm);
   pubClient.publish(topic, message.c_str());
+  serialOutput(pm);
   
+}
+
+// Concatenates all measured values to one String.
+String buildMessage(PmResult pm)
+{
+  String partOne = String(humidity);
+  String partTwo = String(temperature);
+  String partThree = String(pm.pm25);
+  String partFour = String(pm.pm10);
+  String tempMsg = partOne + partTwo + partThree + partFour;
+  return tempMsg;
+}
+
+// Prints all values to the serial monitor. Just for debug reasons.
+void serialOutput(PmResult pm) 
+{
   Serial.print("Humidity: ");
   Serial.print(humidity, 1);
   Serial.print("% Temperature: ");
@@ -56,20 +73,9 @@ void loop()
     Serial.print(pm.pm25);
     Serial.print(", PM10 = ");
     Serial.println(pm.pm10);
-
   }
   else
   {
     Serial.println("PM not measuring.");
   }
-}
-
-String buildMessage(PmResult pm)
-{
-  String partOne = String(humidity); 
-  String partTwo = String(temperature);
-  String partThree = String(pm.pm25);
-  String partFour = String(pm.pm10);
-  String tempMsg = partOne + partTwo + partThree + partFour;
-  return tempMsg;
 }
