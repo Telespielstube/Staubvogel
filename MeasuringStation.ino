@@ -22,9 +22,10 @@ inline float Station::readTemperature()
     return _dht.readTemperature();
 }
 
-void Station::sensorFailure(float humidity, float temperature) 
+void Station::sensorFailure(float *humidity, float *temperature) 
 {
-    if (isnan(humidity) || isnan(temperature) ) {
+    if (isnan(*humidity) || isnan(*temperature)) 
+    {
         Serial.println(F("Failed to read from DHT sensor!"));
     }
     return;

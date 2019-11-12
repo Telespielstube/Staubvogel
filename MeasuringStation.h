@@ -18,7 +18,7 @@ class Station {
         Station(int dhtPin, int dhtType, int DUST_RX_PIN, int DUST_TX_PIN);
         float readHumidity();
         float readTemperature();
-        void sensorFailure(float humidity, float temperature);
+        void sensorFailure(float *humidity, float *temperature);
         PmResult readPm();
 };
 

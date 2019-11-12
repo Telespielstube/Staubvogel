@@ -16,14 +16,13 @@ class Connection {
         int _MQTTPORT;
         char *_MQTTUSER;
         char *_MQTTPASSWORD;
-
         WiFiClient _wifiClient;
-        PubSubClient _client;
+        PubSubClient _pubClient;
 
     public:
-        Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD);
+        Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD, WiFiClient wifiClient, PubSubClient pubClient);
         void connectToWifi();
-       // void obtainLocalIpAddress();
-        void connectToBroker(PubSubClient client, char *mqttServer,  int mqttPort,  char *mqttUser);
+        void connectToBroker();
+        //void reconnectToBroker();
 };
 #endif

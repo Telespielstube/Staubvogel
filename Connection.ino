@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-Connection::Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD) : _wifiClient(), _client(_wifiClient)
+Connection::Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD, WiFiClient wifiClient, PubSubClient pubClient)
 {
     _SSID = SSID;
     _PASSWORD = PASSWORD;
@@ -10,6 +10,8 @@ Connection::Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER,
     _MQTTPORT = MQTTPORT;
     _MQTTUSER = MQTTUSER;
     _MQTTPASSWORD = MQTTPASSWORD;
+    _wifiClient = wifiClient;
+    _pubClient = pubClient;
 }
 
 // Function to connect to wifi access point.
@@ -27,23 +29,22 @@ void Connection::connectToWifi()
     Serial.println(WiFi.SSID());
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
-    connectToBroker(_client, _MQTTSERVER, _MQTTPORT, _MQTTUSER);
+    connectToBroker();
     Serial.println("Trying to connect to network.");
 }
 
 /* Function to connect to a MQTT server.
  *  
  */
-void Connection::connectToBroker(PubSubClient client, char *mqttServer, int mqttPort, char *mqttUser)
+void Connection::connectToBroker()
 {
     Serial.println("Connecting to MQTT broker");
-    client.setServer(_MQTTSERVER, _MQTTPORT);
-    // wifiClient.setCallback(callback); // handles incoming messages for subscribed topics.
+    _pubClient.setServer(_MQTTSERVER, _MQTTPORT);
 
-    while (!client.connected())
+    while (!_pubClient.connected())
     {
         Serial.println("Connecting to MQTT broker.");
-        if (client.connect(mqttUser))
+        if (_pubClient.connect(_MQTTUSER))
         {
             Serial.println("connected");
         }
