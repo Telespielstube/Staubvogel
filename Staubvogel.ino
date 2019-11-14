@@ -15,8 +15,10 @@ char *MQTTSERVER = "localhost";
 int MQTTPORT = 1883;
 char *MQTTUSER = "Marta";
 char *MQTTPASSWORD = "12345";
-const char *topic = "/home/AirQuality";
-String message;
+const char *topicTemp = "/home/backyard/temperature";
+const char *topicHum = "/home/backyard/humidity";
+const char *topicDust = "/home/backyard/fineDust";
+String dustSensorMessage;
 
 WiFiClient wifiClient;
 PubSubClient pubClient;
@@ -35,30 +37,29 @@ void setup()
 
 void loop()
 {
-  delay(8000);
+  delay(10000);
 
   humidity = station.readHumidity();
   temperature = station.readTemperature();
   station.sensorFailure(&humidity, &temperature);
   PmResult pm = station.readPm();
-  message = buildMessage(pm);
-  pubClient.publish(topic, message.c_str());
+  dustSensorMessage = buildDustMessage(pm);
+  pubClient.publish(topicTemp, String(temperature).c_str());
+  pubClient.publish(topicHum, String(humidity).c_str());
+  pubClient.publish(topicDust, dustSensorMessage.c_str());
   serialOutput(pm);
-  
 }
 
 // Concatenates all measured values to one String.
-String buildMessage(PmResult pm)
+String buildDustMessage(PmResult pm)
 {
-  String partOne = String(humidity);
-  String partTwo = String(temperature);
-  String partThree = String(pm.pm25);
-  String partFour = String(pm.pm10);
-  String tempMsg = partOne + partTwo + partThree + partFour;
+  String pm10 = String(pm.pm25);
+  String pm25 = String(pm.pm10);
+  String tempMsg = pm10 + ',' + pm25;
   return tempMsg;
 }
 
-// Prints all values to the serial monitor. Just for debug reasons.
+// Prints all values to the serial monitor. Just for debugging.
 void serialOutput(PmResult pm) 
 {
   Serial.print("Humidity: ");
