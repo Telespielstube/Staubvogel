@@ -2,52 +2,64 @@
 #include "SdsDustSensor.h"
 #include "MeasuringStation.h"
 #include "Connection.h"
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
 
+// Sensor pins
 const int DHT_PIN = 13;
 const int DHT_TYPE = DHT11; // DHT 11
 const int DUST_RX_PIN = D1; // fine dust sensor
 const int DUST_TX_PIN = D2; // fine dust sensor
-
+//Wifi credentials
 const char *SSID = "Telespielstube_2.0";
 const char *PASSWORD = "8757420130565695";
-
-char *MQTTSERVER = "localhost";
+// MQTT credentials
+const char *MQTTSERVER = "broker.hivemq.com";
 int MQTTPORT = 1883;
-char *MQTTUSER = "Marta";
-char *MQTTPASSWORD = "12345";
+const char *MQTTUSER = "telespielstube";
+const char *MQTTPASSWORD = "12345";
+// MQTT topics 
 const char *topicTemp = "/home/backyard/temperature";
 const char *topicHum = "/home/backyard/humidity";
 const char *topicDust = "/home/backyard/fineDust";
-String dustSensorMessage;
 
 WiFiClient wifiClient;
-PubSubClient pubClient;
+PubSubClient pubClient(wifiClient);
 Station station(DHT_PIN, DHT_TYPE, DUST_RX_PIN, DUST_TX_PIN);
-Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWORD, wifiClient, pubClient);
-float humidity = 0.0;
-float temperature = 0.0;
+Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWORD, &wifiClient, &pubClient);
+float humidity;
+float temperature;
+String dustSensorMessage;
 
 void setup()
 {
-  delay(2000);
-  Serial.begin(9600);
-  connection.connectToWifi();
-  connection.connectToBroker();
+  delay(500);
+  Serial.begin(115200);
+  connection.connectToWifi(); 
 }
 
+void byteMessage()
+{
+}
 void loop()
 {
-  delay(10000);
-
+  if (!pubClient.connected())
+  {
+    connection.connectToBroker();
+  }
+  pubClient.loop();
+  
+  delay(5000);
   humidity = station.readHumidity();
   temperature = station.readTemperature();
   station.sensorFailure(&humidity, &temperature);
   PmResult pm = station.readPm();
+  
   dustSensorMessage = buildDustMessage(pm);
   pubClient.publish(topicTemp, String(temperature).c_str());
   pubClient.publish(topicHum, String(humidity).c_str());
   pubClient.publish(topicDust, dustSensorMessage.c_str());
-  serialOutput(pm);
+  //serialOutput(pm);
 }
 
 // Concatenates all measured values to one String.
@@ -58,7 +70,7 @@ String buildDustMessage(PmResult pm)
   String tempMsg = pm10 + ',' + pm25;
   return tempMsg;
 }
-
+/*
 // Prints all values to the serial monitor. Just for debugging.
 void serialOutput(PmResult pm) 
 {
@@ -79,4 +91,4 @@ void serialOutput(PmResult pm)
   {
     Serial.println("PM not measuring.");
   }
-}
+} */

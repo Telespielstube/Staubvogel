@@ -12,17 +12,16 @@ class Connection {
         const char *_PASSWORD;
 
         // MQTT credentials
-        char *_MQTTSERVER;
+        const char *_MQTTSERVER;
         int _MQTTPORT;
-        char *_MQTTUSER;
-        char *_MQTTPASSWORD;
-        WiFiClient _wifiClient;
-        PubSubClient _pubClient;
+        const char *_MQTTUSER;
+        const char *_MQTTPASSWORD;
+        WiFiClient* _wifiClient;
+        PubSubClient* _pubClient;
 
     public:
-        Connection(const char *SSID, const char *PASSWORD, char *MQTTSERVER, int MQTTPORT, char *MQTTUSER, char *MQTTPASSWORD, WiFiClient wifiClient, PubSubClient pubClient);
+        Connection(const char *SSID, const char *PASSWORD, const char *MQTTSERVER, int MQTTPORT, const char *MQTTUSER, const char *MQTTPASSWORD, WiFiClient *wifiClient, PubSubClient *pubClient);
         void connectToWifi();
         void connectToBroker();
-        //void reconnectToBroker();
 };
 #endif

@@ -11,7 +11,8 @@
                 "/Users/marta/Documents/Arduino/libraries/DHT_sensor_library/",
                 "/Users/marta/Library/Arduino15/packages/esp8266/tools/**",
                 "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.5.2/**",
-                "/Users/marta/Documents/Arduino/libraries/Adafruit_MQTT_Library"
+                "/Users/marta/Documents/Arduino/libraries/Adafruit_MQTT_Library",
+                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.6.0/**"
             ],
             "forcedInclude": [],
             "macFrameworkPath": [
