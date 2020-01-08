@@ -8,19 +8,19 @@
 class Connection {
     private:
         // Client credentials
-        const char *_SSID; 
-        const char *_PASSWORD;
+        char const *_ssid; 
+        char const *_password;
 
         // MQTT credentials
-        const char *_MQTTSERVER;
-        int _MQTTPORT;
-        const char *_MQTTUSER;
-        const char *_MQTTPASSWORD;
+        char const *_mqttServer;
+        int _mqttPort;
+        char const *_mqttUser;
+        char const *_mqttPassword;
         WiFiClient* _wifiClient;
         PubSubClient* _pubClient;
 
     public:
-        Connection(const char *SSID, const char *PASSWORD, const char *MQTTSERVER, int MQTTPORT, const char *MQTTUSER, const char *MQTTPASSWORD, WiFiClient *wifiClient, PubSubClient *pubClient);
+        Connection(char const *ssid, char const *password, char const *mqttServer, int mqttPort, char const *mqttUser, char const *mqttPassword, WiFiClient *wifiClient, PubSubClient *pubClient);
         void connectToWifi();
         void connectToBroker();
 };

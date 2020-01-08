@@ -1,94 +1,69 @@
 #include "DHT.h"
 #include "SdsDustSensor.h"
-#include "MeasuringStation.h"
+#include "Station.h"
 #include "Connection.h"
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 // Sensor pins
-const int DHT_PIN = 13;
-const int DHT_TYPE = DHT11; // DHT 11
-const int DUST_RX_PIN = D1; // fine dust sensor
-const int DUST_TX_PIN = D2; // fine dust sensor
+int const dhtPin = 13;
+int const dhtType = DHT11; // DHT 11
+int const dustRxPin = D1; // fine dust sensor
+int const dustTxPin = D2; // fine dust sensor
+
 //Wifi credentials
-const char *SSID = "Telespielstube_2.0";
-const char *PASSWORD = "8757420130565695";
+char const *ssid = "iPhone";
+char const *password = "mqttProject";
+
 // MQTT credentials
-const char *MQTTSERVER = "broker.hivemq.com";
-int MQTTPORT = 1883;
-const char *MQTTUSER = "telespielstube";
-const char *MQTTPASSWORD = "12345";
-// MQTT topics 
-const char *topicTemp = "/home/backyard/temperature";
-const char *topicHum = "/home/backyard/humidity";
-const char *topicDust = "/home/backyard/fineDust";
+char const *mqttServer = "broker.hivemq.com";
+int mqttPort = 1883;
+char const *mqttUser = "telespielstube";
+char const *mqttPassword = "12345";
+
+// MQTT topics
+char const *topicTemp = "/home/backyard/dht11";
+char const *topicDust = "/home/backyard/sds11";
 
 WiFiClient wifiClient;
 PubSubClient pubClient(wifiClient);
-Station station(DHT_PIN, DHT_TYPE, DUST_RX_PIN, DUST_TX_PIN);
-Connection connection(SSID, PASSWORD, MQTTSERVER, MQTTPORT, MQTTUSER, MQTTPASSWORD, &wifiClient, &pubClient);
+Station station(dhtPin, dhtType, dustRxPin, dustTxPin);
+Connection connection(ssid, password, mqttServer, mqttPort, mqttUser, mqttPassword, &wifiClient, &pubClient);
 float humidity;
 float temperature;
-String dustSensorMessage;
 
-void setup()
-{
-  delay(500);
+void setup() {
   Serial.begin(115200);
-  connection.connectToWifi(); 
+  connection.connectToWifi();
 }
 
-void byteMessage()
-{
-}
-void loop()
-{
-  if (!pubClient.connected())
-  {
+void loop() {
+  if (WiFi.status() != WL_CONNECTED) {
+    connection.connectToWifi();
+  } else if (!pubClient.connected()) {
     connection.connectToBroker();
   }
   pubClient.loop();
-  
-  delay(5000);
+  delay(12000);
   humidity = station.readHumidity();
   temperature = station.readTemperature();
-  station.sensorFailure(&humidity, &temperature);
   PmResult pm = station.readPm();
-  
-  dustSensorMessage = buildDustMessage(pm);
-  pubClient.publish(topicTemp, String(temperature).c_str());
-  pubClient.publish(topicHum, String(humidity).c_str());
-  pubClient.publish(topicDust, dustSensorMessage.c_str());
-  //serialOutput(pm);
-}
 
-// Concatenates all measured values to one String.
-String buildDustMessage(PmResult pm)
-{
-  String pm10 = String(pm.pm25);
-  String pm25 = String(pm.pm10);
-  String tempMsg = pm10 + ',' + pm25;
-  return tempMsg;
+  // Validates fine dust data values and publishes them if valid
+  if (station.sdsValid(&pm)) {
+    String dustSensorMessage = station.buildDustMessage(pm);
+    if (!pubClient.publish(topicDust, dustSensorMessage.c_str())) {
+      Serial.println("Error publishing fine dust data.");
+    }
+  } else {
+    Serial.println("Invalid fine dust data received. Not publishing.");
+  }
+  if (station.dhtValid(&humidity, &temperature)) {
+    String tempSensorMessage = station.buildTempMessage(temperature, humidity);
+    if (!pubClient.publish(topicTemp, tempSensorMessage.c_str())) {
+      Serial.println("Error publishing dht11 data.");
+    }
+  } else {
+    Serial.println("Invalid temperature data received. Not publishing.");
+  }
 }
-/*
-// Prints all values to the serial monitor. Just for debugging.
-void serialOutput(PmResult pm) 
-{
-  Serial.print("Humidity: ");
-  Serial.print(humidity, 1);
-  Serial.print("% Temperature: ");
-  Serial.print(temperature, 1);
-  Serial.println(F("C "));
-
-  if (pm.isOk())
-  {
-    Serial.print("PM2.5 = ");
-    Serial.print(pm.pm25);
-    Serial.print(", PM10 = ");
-    Serial.println(pm.pm10);
-  }
-  else
-  {
-    Serial.println("PM not measuring.");
-  }
-} */
