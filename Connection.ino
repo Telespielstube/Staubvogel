@@ -2,13 +2,17 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-Connection::Connection(char const *ssid, char const *password, char const *mqttServer, int mqttPort, char const *mqttUser, char const *mqttPassword, WiFiClient *wifiClient, PubSubClient *pubClient) {
+Connection::Connection(char const *ssid, char const *password, char const *mqttServer, int mqttPort, char const *mqttUser, char const *mqttPassword, char const *willTopic, int willQoS, int willRetain, char const *willMessage, WiFiClient *wifiClient, PubSubClient *pubClient) {
   _ssid = ssid;
   _password = password;
   _mqttServer = mqttServer;
   _mqttPort = mqttPort;
   _mqttUser = mqttUser;
   _mqttPassword = mqttPassword;
+  _willTopic = willTopic;
+  _willQoS = willQoS;
+  _willRetain = willRetain;
+  _willMessage = willMessage;
   _wifiClient = wifiClient;
   _pubClient = pubClient;
 }
@@ -38,11 +42,12 @@ bool Connection::connectToBroker(){
   while (!_pubClient->connected()) {
     String clientId = "Staubfaenger";
     clientId += String(random(0xffff), HEX);
-    if (_pubClient->connect(clientId.c_str(), _mqttUser, _mqttPassword)) {
+    if (_pubClient->connect(clientId.c_str(), _mqttUser, _mqttPassword, willTopic, willQoS, willRetain, willMessage)) {
       Serial.println(clientId + " is connected");
       return true;
     } else {
       Serial.println("Could not connect. " + _pubClient->state());
+      delay(3000);
     }
   }
   return false;
