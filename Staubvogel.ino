@@ -25,18 +25,28 @@ char const *mqttPassword = "12345";
 char const *topicTemp = "/home/backyard/dht11";
 char const *topicDust = "/home/backyard/sds11";
 
+//MQTT last will message. When connecting, this message is stored with the broker and sent to the other clients if publisher gets disconnected.
+char const *willTopic = "/home/backyard/error";
+int willQoS = 2;
+char const *willMessage = "Error";
+int willRetain = 0;
+
 WiFiClient wifiClient;
 PubSubClient pubClient(wifiClient);
 Station station(dhtPin, dhtType, dustRxPin, dustTxPin);
-Connection connection(ssid, password, mqttServer, mqttPort, mqttUser, mqttPassword, &wifiClient, &pubClient);
+Connection connection(ssid, password, mqttServer, mqttPort, mqttUser, mqttPassword, willTopic, willQoS, willRetain, willMessage, &wifiClient, &pubClient);
 float humidity;
 float temperature;
 
+/** Initializes included libraries. Runs only once.
+ */
 void setup() {
   Serial.begin(115200);
   connection.connectToWifi();
 }
 
+/** loops consecutively, allowing your program to change and respond.
+ */
 void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     connection.connectToWifi();
