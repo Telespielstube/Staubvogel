@@ -41,7 +41,9 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     connection.connectToWifi();
   } else if (!pubClient.connected()) {
-    connection.connectToBroker();
+    if (connection.connectToBroker()) {
+      return;
+    }
   }
   pubClient.loop();
   delay(12000);
@@ -52,7 +54,7 @@ void loop() {
   // Validates fine dust data values and publishes them if valid
   if (station.sdsValid(&pm)) {
     String dustSensorMessage = station.buildDustMessage(pm);
-    if (!pubClient.publish(topicDust, dustSensorMessage.c_str())) {
+    if (!pubClient.publish(topicDust, dustSensorMessage.c_str(), true)) {
       Serial.println("Error publishing fine dust data.");
     }
   } else {
@@ -60,7 +62,7 @@ void loop() {
   }
   if (station.dhtValid(&humidity, &temperature)) {
     String tempSensorMessage = station.buildTempMessage(temperature, humidity);
-    if (!pubClient.publish(topicTemp, tempSensorMessage.c_str())) {
+    if (!pubClient.publish(topicTemp, tempSensorMessage.c_str(), true)) {
       Serial.println("Error publishing dht11 data.");
     }
   } else {

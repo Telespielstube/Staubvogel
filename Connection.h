@@ -22,6 +22,6 @@ class Connection {
     public:
         Connection(char const *ssid, char const *password, char const *mqttServer, int mqttPort, char const *mqttUser, char const *mqttPassword, WiFiClient *wifiClient, PubSubClient *pubClient);
         void connectToWifi();
-        void connectToBroker();
+        bool connectToBroker();
 };
 #endif

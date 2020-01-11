@@ -29,11 +29,10 @@ void Connection::connectToWifi() {
 
 /* Function to connect to a MQTT server.
 */
-void Connection::connectToBroker(){ 
+bool Connection::connectToBroker(){ 
   if (_pubClient->connected()) {
-    return;
+    return true;
   }
-  
   _pubClient->setServer(_mqttServer, _mqttPort);
   Serial.println("Connecting to MQTT broker");
   while (!_pubClient->connected()) {
@@ -41,8 +40,10 @@ void Connection::connectToBroker(){
     clientId += String(random(0xffff), HEX);
     if (_pubClient->connect(clientId.c_str(), _mqttUser, _mqttPassword)) {
       Serial.println(clientId + " is connected");
+      return true;
     } else {
       Serial.println("Could not connect. " + _pubClient->state());
     }
   }
+  return false;
 }
