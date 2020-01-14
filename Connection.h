@@ -20,8 +20,8 @@ class Connection {
         int _willQoS;
         int _willRetain;
         char const *_willMessage;
-        WiFiClient* _wifiClient;
-        PubSubClient* _pubClient;
+        WiFiClient *_wifiClient;
+        PubSubClient *_pubClient;
 
     public:
         /** Constructor for Connection object.

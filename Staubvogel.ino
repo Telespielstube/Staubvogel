@@ -1,3 +1,8 @@
+/** The program collects data measured by a temperature sensor and a fine dust sensor 
+  * and sends them to an MQTT broker via a network connection.
+  * 
+  * @Marta
+  */
 #include "DHT.h"
 #include "SdsDustSensor.h"
 #include "Station.h"
@@ -12,8 +17,10 @@ int const dustRxPin = D1; // fine dust sensor
 int const dustTxPin = D2; // fine dust sensor
 
 //Wifi credentials
-char const *ssid = "iPhone";
-char const *password = "mqttProject";
+char const *ssid = "Telespielstube_2.0";
+char const *password = "8757420130565695";
+//char const *ssid = "Rechnernetze";
+//char const *password = "rnFIW625";
 
 // MQTT credentials
 char const *mqttServer = "broker.hivemq.com";
